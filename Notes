@@ -1,0 +1,113 @@
+expect_that(10, equals(10))
+expect_that(10, equals(11))
+expect_that(c(10, 20), equals(c(10, 20)))
+expect_that(c(10, 20), equals(c(10, 21)))
+# equals for testing equality with numerical tolerance.
+# 	I'm pretty sure numerical tolerance is to deal with floating point
+# 		error
+
+expect_that(10, is_identical_to(10))
+expect_that(10, is_identical_to(10 + 1e-10))
+expect_that(10, equals(10 + 1e-10))
+# identical is for exact equality
+
+expect_that(c('one' = 1, 'two' = 2), is_equivalent_to(1:2))
+expect_that(c('one' = 1, 'two' = 2), equals(1:2))
+# For equals() that ignores attribtes
+
+model <- lm(mpg ~ wt, data = mtcars)
+expect_that(model, is_a("lm"))
+expect_that(model, is_a("glm"))
+# Does the object INHERIT from a certain class?
+
+string <- 'Testing is fun!'
+expect_that(string, matches("Testing"))
+expect_that(string, matches("testing"))
+expect_that(string, matches("Testing is fun!"))
+expect_that(string, matches("t.+ting")) # Should be able to match regex patterns
+# Match a character vect against a regex pattern
+
+a <- list(1:10, letters)
+expect_that(str(a), prints_text("List of 2"))
+expect_that(str(a), prints_text(fixed("int [1:10]")))
+expect_that(str(a), prints_text("int [1:10]")) # I have no idea why this doesn't pass
+# Match printed output with regex
+
+expect_that(library(mgcv), shows_message("This is mgcv"))
+expect_that(library(mgcv), shows_message("This is mgcv dkdk"))
+# matches message from an expression
+
+expect_that(log(-1), gives_warning())
+expect_that(log(-1), gives_warning('NaNs produced')) # match against text in the warning
+expect_that(log(0), gives_warning())
+
+expect_that(1 / 2, throws_error())
+expect_that(1 / 'a', throws_error())
+expect_that(1 / 'a', throws_error('non-numeric argument')) # match with test in the error message
+
+expect_that(1 == 1, is_true())
+expect_that(1 == 12, is_true())
+expect_that(1 != 1, is_false())
+expect_that(1 == 1, is_false())
+
+is_solomon <- function() {
+	function(x) {
+		expectation(
+			identical(x, 'solomon'),
+			"text is different than 'solomon'"
+		)
+	}
+}
+is_solomon <- function() {
+	function(x) {
+		expectation(
+			is_identical_to(x, 'solomon'),
+			"text is different than 'solomon'"
+		)
+	}
+}
+expect_that('solomon', is_solomon())
+expect_that('biscuit', is_solomon())
+
+is_true2 <- function() {
+	function(x) {
+		expectation(
+			identical(x, TRUE),
+			"val is different than TRUE"
+		)
+	}
+}
+expect_that(TRUE, is_true2())
+expect_that(FALSE, is_true2())
+
+x <- FALSE
+x <- TRUE
+expectation(
+	'error',
+	"val is different than TRUE"
+)
+
+
+is_solomon <- function(x) is_identical_to(x)
+
+
+
+test_that('Punch types work for different punch situations', {
+	<some helper stuff to get set up>
+
+	expect_that(x, y)
+	expect_that(y, z)
+	expect_that(i, j)
+})
+# This is an example of a context
+
+
+test_file(path)
+# Run all tests in a file. Use this instead of throwing tests into script
+# 	and calling source()
+
+test_dir(path)
+# Run all test files in a directory, assuming test files start with 'test'.
+test_dir(<some path>, 'minimal')
+# You can control some of the settings for returning how to print out 
+# 	info from the tests, more or less verbose, etc.
